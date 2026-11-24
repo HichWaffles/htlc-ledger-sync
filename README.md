@@ -15,7 +15,7 @@ Report: [`docs/REPORT.md`](docs/REPORT.md) ([PDF](docs/REPORT.pdf)) · plan: [`d
 Linux or WSL2 (Ubuntu) with Docker, Node.js 20+, git, curl and jq. On Windows, clone **inside WSL** (not under `/mnt/c`).
 
 ```bash
-git clone <repository-url> ~/htlc-ledger-sync && cd ~/htlc-ledger-sync
+git clone https://github.com/<anonymous-login>/htlc-ledger-sync.git ~/htlc-ledger-sync && cd ~/htlc-ledger-sync
 npm run setup     # checks tools, gets Fabric 2.5 if missing, installs packages, writes the .env files
 npm start         # Hardhat + contracts, Fabric + chaincodes, both apps, monitor
 ```
@@ -31,6 +31,7 @@ Full steps, including MetaMask for TP1: [report, section 5](docs/REPORT.md#5-run
 | `npm run demo:unauthorized` | shows that Hardhat's test accounts cannot write to the sync contract |
 | `npm test` | contract and chaincode unit tests |
 | `npm run reset` | erases the Fabric ledger and both app databases |
+| `ANON_TERMS="name,login" npm run check:anonymous` | before a push: authors, local files, paths and the given words ([report 5.1](docs/REPORT.md#51-publishing-the-anonymous-repository-once)) |
 
 ## Layout
 

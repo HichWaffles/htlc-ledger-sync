@@ -17,6 +17,11 @@ It was designed for **exchanges of value between parties who do not trust each o
 [3][4], payment routing in the Lightning Network [5][6], and asset exchange between Fabric and Corda networks in
 Hyperledger Cacti [7]. The guarantee is atomicity: both transfers happen or both are refunded [4].
 
+> **Synchronising records is not what an HTLC is meant for: it is the wrong primitive.** Copying a record from one ledger to another is
+> replication, not an exchange: nothing of value is traded, the two apps cooperate instead of distrusting each other,
+> and we need "eventually on both ledgers", not "both or neither". The HTLC is used here because the assignment
+> requires it; section 7 sets out what this costs and what it brings.
+
 ## 3. Architecture
 
 ```mermaid
@@ -85,11 +90,31 @@ stateDiagram-v2
 
 ## 5. Running it
 
+### 5.1 Publishing the anonymous repository (once)
+
+The history already has a single anonymous author (`anonymous <anonymous@users.noreply.github.com>`) and the repository's
+local git config keeps it for new commits. Generated files (`.env`, keys, databases, logs) are git-ignored.
+
+1. Create a GitHub account that does not identify you, then an **empty** repository in it (no README, no licence).
+2. Check before every push (your names and logins are typed here only, never stored in the repository):
+   ```bash
+   ANON_TERMS="first name,last name,personal login" bash scripts/check-anonymous.sh
+   ```
+3. Push with the anonymous account (put its login in the URL so git does not reuse your personal credentials):
+   ```bash
+   git remote add origin https://<anonymous-login>@github.com/<anonymous-login>/htlc-ledger-sync.git
+   git push -u origin main
+   ```
+4. For reviewers, [Anonymous GitHub](https://anonymous.4open.science) can also serve a read-only anonymised mirror.
+
+### 5.2 Running it
+
 Prerequisites: Linux or **WSL2 (Ubuntu)**, Docker (Docker Desktop with WSL integration on Windows), Node.js 20+,
 git, curl, jq. On Windows run every command **inside WSL**, with the repository in the WSL file system (not `/mnt/c`).
 
 ```bash
-git clone <repository-url> ~/htlc-ledger-sync && cd ~/htlc-ledger-sync
+git clone https://github.com/<anonymous-login>/htlc-ledger-sync.git ~/htlc-ledger-sync
+cd ~/htlc-ledger-sync
 npm run setup        # checks tools, downloads Fabric 2.5 if missing, installs, writes the .env files
 npm start            # Hardhat + contracts, Fabric + chaincodes, TP1, TP2, monitor
 ```
@@ -126,6 +151,10 @@ Already have `fabric-samples`? Use `FABRIC_SAMPLES=/path/to/fabric-samples npm r
 
 ## 7. Assessment
 
+**Not the intended use.** HTLCs exist to exchange value atomically between parties who do not trust each other
+(section 2). Here they carry data between cooperating apps, so most of their guarantees are unused and the work is
+done by code around them.
+
 **It only works because of what we added to the apps.** An HTLC is a lock; neither ledger knows the other exists, and
 cross-chain communication is impossible without a trusted third party [8]. Here that role is played by components we
 wrote: the contract and the chaincode, a sync engine and a ledger watcher in each app, credentials on the other
@@ -133,7 +162,7 @@ network, TP1's operator key, reconciliation and clock handling.
 
 **Why it is not a good fit**
 
-1. Wrong tool: HTLCs solve fair exchange; we need replication between cooperating parties.
+1. Wrong primitive: HTLCs solve fair exchange; we need replication between cooperating parties.
 2. It checks that both sides followed the steps, not that the record is legitimate.
 3. Trust moves into the apps (secret in SQLite, key in `.env`).
 4. Both apps must be online before the deadlines.
