@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moniteur de synchronisation HTLC</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="bar">
+    <div class="wrap bar-inner">
+      <h1>Moniteur de synchronisation HTLC <span class="muted">Ethereum (TP1) / Hyperledger Fabric (TP2)</span></h1>
+      <p class="live" id="live"><span id="liveText">Connexion…</span></p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section aria-labelledby="sumTitle">
+      <h2 id="sumTitle" class="sr-only">État des registres</h2>
+      <div class="summary">
+        <div class="cell" id="ethCell"></div>
+        <div class="cell" id="fabCell"></div>
+        <div class="cell" id="statusCell" role="status" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section aria-labelledby="syncTitle">
+      <div class="section-head">
+        <h2 id="syncTitle">Synchronisations</h2>
+        <fieldset class="filters">
+          <legend class="sr-only">Afficher</legend>
+          <label><input type="checkbox" data-filter="running" checked> En cours <span class="n" id="cRunning">0</span></label>
+          <label><input type="checkbox" data-filter="done" checked> Terminées <span class="n" id="cDone">0</span></label>
+          <label><input type="checkbox" data-filter="expired"> Expirées <span class="n" id="cExpired">0</span></label>
+        </fieldset>
+      </div>
+      <div class="scroll" id="syncs"></div>
+    </section>
+
+    <section aria-labelledby="recTitle">
+      <div class="section-head">
+        <h2 id="recTitle">Enregistrements</h2>
+      </div>
+      <div class="scroll" id="records"></div>
+    </section>
+
+    <p class="foot">Lecture seule. Cette page lit les deux registres et le journal de synchronisation des deux applications ; elle n'envoie aucune transaction.</p>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

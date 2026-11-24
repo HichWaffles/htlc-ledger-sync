@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Espace Patient</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+
+  <header class="topbar">
+    <div class="brand">🧑 Espace Patient</div>
+    <div class="user-info">
+      <span id="patientNameTop"></span>
+      <button class="btn btn-secondary btn-small" onclick="logout()">Déconnexion</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <div class="profile-heading">
+        <h2>Mon profil</h2>
+        <button id="editProfileButton" class="btn btn-secondary btn-small" type="button">Modifier</button>
+      </div>
+      <p id="profileDetails" style="color:#64748b;">Chargement...</p>
+      <form id="profileForm" hidden>
+        <label for="profileName">Nom</label>
+        <input id="profileName" name="name" type="text" required maxlength="100" autocomplete="name">
+        <label for="profileEmail">Email</label>
+        <input id="profileEmail" name="email" type="email" required autocomplete="email">
+        <label for="profilePassword">Nouveau mot de passe</label>
+        <input id="profilePassword" name="password" type="password" minlength="6" autocomplete="new-password" placeholder="Laisser vide pour conserver l'actuel">
+        <label for="profileBirthDate">Date de naissance</label>
+        <input id="profileBirthDate" name="birth_date" type="date">
+        <label for="profileGender">Genre</label>
+        <input id="profileGender" name="gender" type="text">
+        <div class="profile-actions">
+          <button class="btn btn-small" type="submit">Enregistrer</button>
+          <button id="cancelProfileButton" class="btn btn-secondary btn-small" type="button">Annuler</button>
+        </div>
+        <p id="profileMessage" class="error-msg"></p>
+      </form>
+    </div>
+
+    <div class="card">
+      <h3>📋 Mon dossier médical</h3>
+      <div id="dossierContainer"></div>
+    </div>
+  </div>
+
+  <script src="../js/api.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+
+</html>

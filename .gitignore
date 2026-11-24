@@ -1,0 +1,11 @@
+node_modules/
+.env
+.env.*
+.run/
+.fabric/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+coverage/
+.nyc_output/
+*.log

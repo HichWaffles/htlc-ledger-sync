@@ -1,0 +1,22 @@
+{
+  "name": "htlc-ledger-sync",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Two medical-record apps on two ledgers (Ethereum, Hyperledger Fabric) kept in sync with hash time-locked contracts",
+  "workspaces": ["apps/*", "sync", "monitor"],
+  "scripts": {
+    "setup": "bash scripts/setup.sh",
+    "start": "bash scripts/start.sh",
+    "stop": "bash scripts/stop.sh",
+    "status": "bash scripts/status.sh",
+    "reset": "bash scripts/reset.sh",
+    "test": "bash scripts/test.sh",
+    "demo:eth-record": "node tools/add-eth-record.js",
+    "demo:unauthorized": "node tools/try-unauthorized.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "ethers": "^6.17.0"
+  },
+  "engines": { "node": ">=20" }
+}
