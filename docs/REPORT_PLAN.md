@@ -19,6 +19,6 @@ Draft text for every part is in `docs/REPORT.md`; figures are in `docs/images/`.
 **Style:** first person, short sentences, English body with the TP's French titles, no em dashes, intros of two
 sentences at most. **Length target:** 6 to 8 pages including figures.
 
-**Figures** (`docs/images/`, 2x resolution): monitor overview with the verification result; the two time locks of a synchronisation (claimed, running, expired and refunded); one synchronisation per
-direction, step by step; verification before and after reconciliation; records table; TP2 doctor page with the
-integrity check.
+**Figures** (`docs/images/`, 2x resolution): in the report, a full synchronisation with its two time locks, a lock
+running out, a lock refunded, and the verification button. Extra screenshots for the final report: monitor overview,
+records table, both doctor pages.

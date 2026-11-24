@@ -139,15 +139,13 @@ Already have `fabric-samples`? Use `FABRIC_SAMPLES=/path/to/fabric-samples npm r
 | TP2 offline, short deadlines | lock refunded at the deadline, new attempt, finished once TP2 was back |
 | Hardhat accounts writing to `HashSyncHTLC` | refused (`NotOperator`) |
 
-![Monitor: both ledgers, verification result, a synchronisation in progress](images/monitor-overview.png)
+![Figure 1. One synchronisation (Ethereum to Fabric). Top: the two time locks, T_A on Ethereum and T_B later on Fabric, both claimed long before their deadline. Below: each step in the column of the ledger it touched.](images/timelock-claimed.png)
 
-![One synchronisation: the two time locks (T_A on Ethereum, T_B later on Fabric), both claimed well before their deadline, then every step per ledger](images/timelock-claimed.png)
+![Figure 2. TP2 offline (40 s locks for the test): TP1's lock counts down, nothing is locked on Fabric.](images/timelock-running.png)
 
-![Time lock running out while TP2 is offline (40 s locks for the test)](images/timelock-running.png)
+![Figure 3. Deadline passed: the lock is refunded and TP1 opens a new attempt with a new secret.](images/timelock-expired.png)
 
-![Deadline passed: the lock is refunded and a new attempt starts with a new secret](images/timelock-expired.png)
-
-![Verification right after a record was added on Ethereum only, before reconciliation](images/monitor-verify-pending.png)
+![Figure 4. "Vérifier la synchronisation" right after a record was added on Ethereum only: the missing record is named; reconciliation copies it within 15 s.](images/monitor-verify-pending.png)
 
 ## 7. Assessment
 
@@ -179,17 +177,11 @@ network, TP1's operator key, reconciliation and clock handling.
 
 **Time lock: second-order effects**
 
-* **Being online becomes a safety condition.** Whoever must act before a deadline has to be running and get a
-  transaction included in time. Every time TP2 was offline, TP1's lock expired and was refunded.
-* **Deadlines compete for block space.** On a public chain, many locks expiring together produce bursts of refund
-  transactions; attackers can time this to congest the chain (Flood & Loot [14]) or bribe miners to delay a claim
-  until the timeout [11]. Hardhat and our Fabric network have no such competition.
-* **Open locks hold state.** Until its deadline a lock blocks its attempt; payment networks are jammed this way [15].
-  Here it only delays one record's retry, but every attempt, expired or not, stays on both ledgers forever.
-* **Finality sets a floor on the TTL.** Ethereum finalises a block after about 15 minutes [16]; on a real network
-  the deadlines would have to cover reorganisations, not only latency (Hardhat and Fabric finalise immediately).
-* **Bad values stop the sync.** `ORIGIN_TTL` must exceed 2 × `MARGIN` plus the detection delay and `RESPONDER_TTL`
-  must be at least `MARGIN`, otherwise every attempt expires and is retried forever, at a gas cost each time.
+* **Liveness becomes safety:** each party must be online and get a transaction included before its deadline.
+* **Deadlines compete for block space:** mass expiries congest a public chain and can be provoked [14]; miners can be bribed to delay a claim [11].
+* **Open locks hold state:** a lock blocks its attempt until the deadline (payment networks are jammed this way [15]); expired attempts stay on both ledgers.
+* **Finality bounds the TTL:** Ethereum finalises after about 15 min [16], so real deadlines must outlast reorganisations.
+* **Wrong values stop the sync:** it needs `ORIGIN_TTL > 2 × MARGIN` + detection delay and `RESPONDER_TTL ≥ MARGIN`.
 
 **Better options for this need:** proof-based data sharing (Hyperledger Cacti / Weaver [13]) or one shared ledger.
 HTLC fits only if records are exchanged for value.
@@ -199,11 +191,11 @@ HTLC fits only if records are exchanged for value.
 **On each ledger** (Solidity contract or Fabric chaincode, same rules):
 
 ```text
-records: set of h                    attempts: syncId -> {h, q, deadline, status, secret}
-addRecord(h)            only the ledger's owner app; idempotent
-lock(id, h, q, T)       require id == sha256(h ‖ q), T > now, no attempt id   -> LOCKED, emit Locked
-claim(id, s)            require LOCKED, now < T, sha256(s) == q               -> CLAIMED, add h, store s
-refund(id)              require LOCKED, now >= T                              -> EXPIRED
+records: set of h              attempts: id -> {h, q, T, status, s}
+addRecord(h)       owner app only; idempotent
+lock(id, h, q, T)  id == sha256(h ‖ q), T > now, id unused  -> LOCKED, emit Locked
+claim(id, s)       LOCKED, now < T, sha256(s) == q          -> CLAIMED, add h, keep s
+refund(id)         LOCKED, now >= T                         -> EXPIRED
 ```
 
 **In each app** (a loop every 2 s; it writes only `own`, reads `other`):

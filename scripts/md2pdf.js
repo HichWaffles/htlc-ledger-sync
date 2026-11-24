@@ -27,6 +27,8 @@ const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8">
   pre { background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 5px; padding: 8pt; overflow: hidden; break-inside: avoid; }
   pre code { background: none; padding: 0; font-size: 8.5pt; white-space: pre-wrap; }
   img { max-width: 100%; border: 1px solid #d0d7de; border-radius: 4px; margin: 6pt 0 2pt; break-inside: avoid; }
+  figure { margin: 8pt 0; break-inside: avoid; }
+  figcaption { font-size: 8.5pt; color: #57606a; margin-top: 2pt; }
   .mermaid { text-align: center; margin: 8pt 0; break-inside: avoid; }
   .mermaid svg { max-width: 100%; height: auto; }
   a { color: #0969da; text-decoration: none; word-break: break-all; }
@@ -38,6 +40,7 @@ const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8">
   const md = ${JSON.stringify(md)};
   const r = new marked.Renderer();
   const code = r.code.bind(r);
+  r.image = (href, title, text) => '<figure><img src="' + href + '" alt="' + text.replace(/"/g, '&quot;') + '"><figcaption>' + text + '</figcaption></figure>';
   r.code = (text, lang) => lang === 'mermaid' ? '<div class="mermaid">' + text.replace(/</g, '&lt;') + '</div>' : code(text, lang);
   document.getElementById('doc').innerHTML = marked.parse(md, { renderer: r });
   mermaid.initialize({ startOnLoad: false, theme: 'neutral', flowchart: { useMaxWidth: true }, sequence: { useMaxWidth: true } });
