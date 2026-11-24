@@ -1,5 +1,10 @@
 # htlc-ledger-sync
 
+> **School work.** This is a coursework project for a university blockchain module (practical sessions TP1 and
+> TP2). It is a teaching exercise, not production software: it runs on local test networks with test accounts,
+> and the HTLC is used for ledger synchronisation because the assignment requires it, not because it is the right
+> primitive for that job (see the [report](docs/REPORT.md), sections 2 and 7).
+
 Two medical-record apps on two ledgers, kept in sync with hash time-locked contracts (HTLC), without a bridge:
 
 * **TP1** (http://localhost:3000) stores dossier fingerprints on **Ethereum** (Hardhat).
@@ -12,13 +17,10 @@ Report: [`docs/REPORT.md`](docs/REPORT.md) ([PDF](docs/REPORT.pdf)) · plan: [`d
 
 ## Quick start
 
-Linux or WSL2 (Ubuntu) with Docker, Node.js 20+, git, curl, jq and python3. On Windows, work **inside WSL** (not under `/mnt/c`).
-Code: https://anonymous.4open.science/r/htlc-ledger-sync-FC78/ (Anonymous GitHub has no `git clone`; use its zip link):
+Linux or WSL2 (Ubuntu) with Docker, Node.js 20+, git, curl and jq. On Windows, work **inside WSL** (not under `/mnt/c`).
 
 ```bash
-mkdir -p ~/htlc-ledger-sync && cd ~/htlc-ledger-sync
-curl -L -o repo.zip https://anonymous.4open.science/api/repo/htlc-ledger-sync-FC78/zip
-python3 -m zipfile -e repo.zip . && rm repo.zip      # unzip with Python (installed on Ubuntu)
+git clone https://github.com/HichWaffles/htlc-ledger-sync.git ~/htlc-ledger-sync && cd ~/htlc-ledger-sync
 npm run setup     # checks tools, gets Fabric 2.5 if missing, installs packages, writes the .env files
 npm start         # Hardhat + contracts, Fabric + chaincodes, both apps, monitor
 ```
@@ -34,7 +36,7 @@ Full steps, including MetaMask for TP1: [report, section 5](docs/REPORT.md#5-run
 | `npm run demo:unauthorized` | shows that Hardhat's test accounts cannot write to the sync contract |
 | `npm test` | contract and chaincode unit tests |
 | `npm run reset` | erases the Fabric ledger and both app databases |
-| `ANON_TERMS="name,login" npm run check:anonymous` | before a push: authors, local files, paths and the given words ([report 5.1](docs/REPORT.md#51-publishing-anonymously-once)) |
+| `ANON_TERMS="first name,last name" npm run check:anonymous` | before a push: commit authors, local files, paths and the given words ([report 5.1](docs/REPORT.md#51-publishing-once)) |
 
 ## Layout
 

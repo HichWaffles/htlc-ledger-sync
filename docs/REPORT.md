@@ -90,35 +90,25 @@ stateDiagram-v2
 
 ## 5. Running it
 
-### 5.1 Publishing anonymously (once)
+### 5.1 Publishing (once)
 
-The code lives in a **private** GitHub repository; reviewers get a public, anonymised copy from
-[Anonymous GitHub](https://anonymous.4open.science), which hides the owner and repository name and replaces chosen
-words in every file. The commit history already has a single anonymous author, and generated files (`.env`, keys,
-databases, logs) are git-ignored.
+The code is public at **https://github.com/HichWaffles/htlc-ledger-sync**. Every commit has the same anonymous author and generated files (`.env`, keys,
+databases, logs) are git-ignored. Before each push, check that nothing personal slipped in (the words are typed on
+the command line only, never stored in the repository):
 
-1. Check before every push (names and logins are typed here only, never stored in the repository):
-   ```bash
-   ANON_TERMS="first name,last name,github login" npm run check:anonymous
-   ```
-2. Push to a private repository: `gh repo create htlc-ledger-sync --private --source . --push`
-   (later changes: `git push`).
-3. On anonymous.4open.science: sign in with GitHub, anonymise `htlc-ledger-sync` (branch `main`), list the same
-   words to hide, allow downloads, optionally set an expiry date. Share only the resulting
-   `https://anonymous.4open.science/r/<id>` link; it shows the files, not the commit history.
+```bash
+ANON_TERMS="first name,last name" npm run check:anonymous && git push
+```
 
 ### 5.2 Running it
 
 Prerequisites: Linux or **WSL2 (Ubuntu)**, Docker (Docker Desktop with WSL integration on Windows), Node.js 20+,
-git, curl and python3 (included in Ubuntu), jq (`sudo apt install jq`). On Windows run every command **inside WSL**, with the code in the WSL file system (not `/mnt/c`).
-
-The code is at **https://anonymous.4open.science/r/htlc-ledger-sync-FC78/**. Anonymous GitHub does not support
-`git clone`, so download it with its zip link instead:
+git and curl (included in Ubuntu), jq (`sudo apt install jq`). On Windows run every command **inside WSL**, with the
+repository in the WSL file system (not `/mnt/c`).
 
 ```bash
-mkdir -p ~/htlc-ledger-sync && cd ~/htlc-ledger-sync
-curl -L -o repo.zip https://anonymous.4open.science/api/repo/htlc-ledger-sync-FC78/zip
-python3 -m zipfile -e repo.zip . && rm repo.zip      # unzip with Python (installed on Ubuntu)
+git clone https://github.com/HichWaffles/htlc-ledger-sync.git ~/htlc-ledger-sync
+cd ~/htlc-ledger-sync
 npm run setup        # checks tools, downloads Fabric 2.5 if missing, installs, writes the .env files
 npm start            # Hardhat + contracts, Fabric + chaincodes, TP1, TP2, monitor
 ```
