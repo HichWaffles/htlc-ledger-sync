@@ -95,11 +95,11 @@ stateDiagram-v2
 ### 5.1 Publishing (once)
 
 The code is public at **https://github.com/HichWaffles/htlc-ledger-sync**. Generated files (`.env`, keys,
-databases, logs) are git-ignored. Before each push, `npm run check:anonymous` checks the commit authors, that no
-local file is tracked and that no absolute path appears:
+databases, logs) are git-ignored. Before each push, `npm run check:publish` checks that every commit has the same
+author with a GitHub noreply email, that no local file is tracked and that no absolute path appears:
 
 ```bash
-npm run check:anonymous && git push
+npm run check:publish && git push
 ```
 
 ### 5.2 Running it

@@ -38,7 +38,7 @@ Full steps, including MetaMask for TP1: [report, section 5](docs/REPORT.md#5-run
 | `npm run demo:unauthorized` | shows that Hardhat's test accounts cannot write to the sync contract |
 | `npm test` | contract and chaincode unit tests |
 | `npm run reset` | erases the Fabric ledger and both app databases |
-| `npm run check:anonymous` | before a push: commit authors, no local files (`.env`, keys, databases) tracked, no absolute paths |
+| `npm run check:publish` | before a push: one author with a GitHub noreply email, no local files (`.env`, keys, databases) tracked, no absolute paths |
 
 ## Layout
 

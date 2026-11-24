@@ -17,7 +17,7 @@
     "test": "bash scripts/test.sh",
     "demo:eth-record": "node tools/add-eth-record.js",
     "demo:unauthorized": "node tools/try-unauthorized.js",
-    "check:anonymous": "bash scripts/check-anonymous.sh"
+    "check:publish": "bash scripts/check-publish.sh"
   },
   "dependencies": {
     "dotenv": "^16.4.5",
