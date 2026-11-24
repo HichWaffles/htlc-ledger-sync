@@ -140,10 +140,29 @@ function timeline(s) {
     <div class="legend"><span><span class="sq eth" aria-hidden="true"></span>écriture (transaction signée)</span><span><span class="sq eth hollow" aria-hidden="true"></span>lecture par l'autre application</span></div>`;
 }
 
-function deadlines(s) {
-  const one = (label, ledger, t) => (t ? `<span>${label} (${NAME[ledger]}) <strong data-deadline="${t}">…</strong>
-      <meter min="0" max="1" data-meter="${t}" data-start="${Math.floor(s.createdAt / 1000)}" aria-hidden="true"></meter></span>` : '');
-  return `<div class="deadlines">${one('Échéance origine', s.from, s.originDeadline)}${one('Échéance destination', s.to, s.destDeadline)}</div>`;
+// The time lock of both HTLCs: where each lock is, when it was set, its deadline, and how it ended.
+// A lock ends in one of two ways: claimed with the secret before its deadline, or refunded after it.
+function timeLocks(s) {
+  const find = (ledger, re) => s.events.find((e) => e.ledger === ledger && re.test(e.step) && OWN_LEDGER[e.app] === ledger);
+  const row = (label, ledger, deadline) => {
+    const set = find(ledger, /^Verrou HTLC/);
+    const claimed = find(ledger, /^(Secret publié|Verrou réclamé|Réclamé|Secret reçu|Verrou local réclamé)/);
+    const refunded = find(ledger, /^Échéance dépassée/);
+    let outcome;
+    if (!deadline) outcome = '<span class="muted">pas encore posé</span>';
+    else if (claimed) outcome = `<span class="lock ok">réclamé à ${clock(claimed.at)}, ${dur(deadline * 1000 - claimed.at).replace(/,\d s$/, ' s')} avant l'échéance</span>`;
+    else if (refunded) outcome = `<span class="lock off">échéance dépassée, remboursé à ${clock(refunded.at)}</span>`;
+    else if (isRunning(s)) outcome = `<span class="lock run">expire <strong data-deadline="${deadline}">…</strong></span>
+        <meter min="0" max="1" data-meter="${deadline}" data-start="${Math.floor((set ? set.at : s.createdAt) / 1000)}" aria-hidden="true"></meter>`;
+    else outcome = '<span class="muted">tentative terminée</span>';
+    return `<tr><th scope="row">${label}</th><td><span class="sq ${KEY[ledger]}" aria-hidden="true"></span> ${NAME[ledger]}</td>
+      <td class="num">${set ? clock(set.at) : '–'}</td><td class="num">${deadline ? clock(deadline * 1000) : '–'}</td><td>${outcome}</td></tr>`;
+  };
+  return `<table class="locks">
+      <caption>Verrous temporels (time lock) : chaque verrou doit être réclamé avec le secret avant son échéance, sinon il est remboursé</caption>
+      <thead><tr><th>Verrou</th><th>Registre</th><th class="num">Posé à</th><th class="num">Échéance</th><th>Issue</th></tr></thead>
+      <tbody>${row('Origine (T<sub>A</sub>)', s.from, s.originDeadline)}${row('Destination (T<sub>B</sub>)', s.to, s.destDeadline)}</tbody>
+    </table>`;
 }
 
 // ------------------------------------------------------------------ sync table
@@ -168,7 +187,7 @@ function syncRows(s) {
         <dt>Hashlock q</dt><dd><span class="mono">${esc(s.hashlock)}</span><button type="button" class="copy" data-copy="${esc(s.hashlock)}">Copier</button></dd>
         <dt>Tentative</dt><dd><span class="mono">${esc(s.syncId)}</span></dd>
       </dl>
-      ${isRunning(s) ? deadlines(s) : ''}
+      ${timeLocks(s)}
       ${s.lastError && isRunning(s) ? `<p class="notice">Nouvel essai toutes les 2 s. Dernière erreur : ${esc(s.lastError)}</p>` : ''}
       ${timeline(s)}
     </td></tr>`;
@@ -248,7 +267,7 @@ function tick() {
     : ago > 6 ? `Pas de réponse depuis ${ago} s` : `Mis à jour à ${clock(ui.fetchedAt)} · toutes les 2 s`;
   document.querySelectorAll('[data-deadline]').forEach((el) => {
     const left = Number(el.dataset.deadline) * 1000 - now;
-    el.textContent = left > 0 ? `dans ${dur(left).replace(/,\d s$/, ' s')}` : 'dépassée';
+    el.textContent = left > 0 ? `dans ${dur(left).replace(/,\d s$/, ' s')}` : 'maintenant (remboursement en cours)';
   });
   document.querySelectorAll('[data-meter]').forEach((el) => {
     const end = Number(el.dataset.meter) * 1000; const start = Number(el.dataset.start) * 1000;

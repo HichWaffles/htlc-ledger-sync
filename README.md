@@ -1,5 +1,7 @@
 # htlc-ledger-sync
 
+**Hichem Hamza** · GI3 S3
+
 > **School work.** This is a coursework project for a university blockchain module (practical sessions TP1 and
 > TP2). It is a teaching exercise, not production software: it runs on local test networks with test accounts,
 > and the HTLC is used for ledger synchronisation because the assignment requires it, not because it is the right
@@ -36,7 +38,7 @@ Full steps, including MetaMask for TP1: [report, section 5](docs/REPORT.md#5-run
 | `npm run demo:unauthorized` | shows that Hardhat's test accounts cannot write to the sync contract |
 | `npm test` | contract and chaincode unit tests |
 | `npm run reset` | erases the Fabric ledger and both app databases |
-| `ANON_TERMS="first name,last name" npm run check:anonymous` | before a push: commit authors, local files, paths and the given words ([report 5.1](docs/REPORT.md#51-publishing-once)) |
+| `npm run check:anonymous` | before a push: commit authors, no local files (`.env`, keys, databases) tracked, no absolute paths |
 
 ## Layout
 

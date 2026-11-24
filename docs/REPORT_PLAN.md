@@ -1,5 +1,7 @@
 # Report plan: synchronising Ethereum and Hyperledger Fabric with HTLCs
 
+**Hichem Hamza** · GI3 S3
+
 Draft text for every part is in `docs/REPORT.md`; figures are in `docs/images/`.
 
 | # | Part | Content | Figures | Sources |
@@ -10,13 +12,13 @@ Draft text for every part is in `docs/REPORT.md`; figures are in `docs/images/`.
 | 4 | Protocol | Lock, detect, lock, publish secret, claim, confirm; `T_B > T_A`; refund and retry; reconciliation | sequence diagram, state diagram | |
 | 5 | Running it | Publishing: identity check, public GitHub repository, `git clone`; prerequisites; `npm run setup`, `npm start`; test accounts; MetaMask; demos; verify button; stop and reset | | |
 | 6 | Results | Both directions timed, recovery after a ledger reset, expiry and retry, refused accounts, unit tests | monitor screenshots, TP2 page | |
-| 7 | Assessment | Not the intended use of an HTLC (wrong primitive); works only thanks to the components we added; 7 drawbacks; 4 advantages; better alternatives | | [8] to [13] |
+| 7 | Assessment | Not the intended use of an HTLC (wrong primitive); time-lock second-order effects; works only thanks to the components we added; 7 drawbacks; 4 advantages; better alternatives | | [8] to [16] |
 | 8 | Implementing the approach | Pseudocode: ledger side (`lock`, `claim`, `refund`) and app side (origin, responder, reconciliation) | | |
-| | Sources | 13 references | | |
+| | Sources | 16 references | | |
 
 **Style:** first person, short sentences, English body with the TP's French titles, no em dashes, intros of two
 sentences at most. **Length target:** 6 to 8 pages including figures.
 
-**Figures** (`docs/images/`, 2x resolution): monitor overview with the verification result; one synchronisation per
+**Figures** (`docs/images/`, 2x resolution): monitor overview with the verification result; the two time locks of a synchronisation (claimed, running, expired and refunded); one synchronisation per
 direction, step by step; verification before and after reconciliation; records table; TP2 doctor page with the
 integrity check.

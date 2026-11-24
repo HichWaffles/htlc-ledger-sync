@@ -25,7 +25,7 @@ paths=$(git grep -nIE '/home/[a-z]|/Users/[A-Za-z]|[A-Z]:\\\\Users|\\\\wsl' -- .
 
 echo "Identifying terms"
 if [ -z "${ANON_TERMS:-}" ]; then
-  printf '\033[33m  ANON_TERMS not set: give your name and usernames, e.g. ANON_TERMS="name,login" %s\033[0m\n' "$0"; fail=1
+  echo '  skipped (optional: ANON_TERMS="word,word" lists words that must not appear)'
 else
   IFS=',' read -ra terms <<<"$ANON_TERMS"
   for t in "${terms[@]}"; do

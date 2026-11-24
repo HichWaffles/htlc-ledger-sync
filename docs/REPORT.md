@@ -1,5 +1,7 @@
 # Synchronising two ledgers with HTLCs (Ethereum ⇄ Hyperledger Fabric)
 
+**Hichem Hamza** · GI3 S3
+
 ## 1. Goal
 
 Two medical-record apps keep the SHA-256 fingerprint of each dossier on a ledger: TP1 on **Ethereum**, TP2 on
@@ -92,12 +94,12 @@ stateDiagram-v2
 
 ### 5.1 Publishing (once)
 
-The code is public at **https://github.com/HichWaffles/htlc-ledger-sync**. Every commit has the same anonymous author and generated files (`.env`, keys,
-databases, logs) are git-ignored. Before each push, check that nothing personal slipped in (the words are typed on
-the command line only, never stored in the repository):
+The code is public at **https://github.com/HichWaffles/htlc-ledger-sync**. Generated files (`.env`, keys,
+databases, logs) are git-ignored. Before each push, `npm run check:anonymous` checks the commit authors, that no
+local file is tracked and that no absolute path appears:
 
 ```bash
-ANON_TERMS="first name,last name" npm run check:anonymous && git push
+npm run check:anonymous && git push
 ```
 
 ### 5.2 Running it
@@ -139,7 +141,11 @@ Already have `fabric-samples`? Use `FABRIC_SAMPLES=/path/to/fabric-samples npm r
 
 ![Monitor: both ledgers, verification result, a synchronisation in progress](images/monitor-overview.png)
 
-![One synchronisation, step by step, one column per ledger](images/monitor-timeline-ethereum-to-fabric.png)
+![One synchronisation: the two time locks (T_A on Ethereum, T_B later on Fabric), both claimed well before their deadline, then every step per ledger](images/timelock-claimed.png)
+
+![Time lock running out while TP2 is offline (40 s locks for the test)](images/timelock-running.png)
+
+![Deadline passed: the lock is refunded and a new attempt starts with a new secret](images/timelock-expired.png)
 
 ![Verification right after a record was added on Ethereum only, before reconciliation](images/monitor-verify-pending.png)
 
@@ -170,6 +176,20 @@ network, TP1's operator key, reconciliation and clock handling.
 * Each organisation keeps sole write authority over its ledger.
 * Every step (locks, secret, claims, refunds) is on a ledger: a full audit trail.
 * Every attempt ends (claim or refund); nothing stays blocked.
+
+**Time lock: second-order effects**
+
+* **Being online becomes a safety condition.** Whoever must act before a deadline has to be running and get a
+  transaction included in time. Every time TP2 was offline, TP1's lock expired and was refunded.
+* **Deadlines compete for block space.** On a public chain, many locks expiring together produce bursts of refund
+  transactions; attackers can time this to congest the chain (Flood & Loot [14]) or bribe miners to delay a claim
+  until the timeout [11]. Hardhat and our Fabric network have no such competition.
+* **Open locks hold state.** Until its deadline a lock blocks its attempt; payment networks are jammed this way [15].
+  Here it only delays one record's retry, but every attempt, expired or not, stays on both ledgers forever.
+* **Finality sets a floor on the TTL.** Ethereum finalises a block after about 15 minutes [16]; on a real network
+  the deadlines would have to cover reorganisations, not only latency (Hardhat and Fabric finalise immediately).
+* **Bad values stop the sync.** `ORIGIN_TTL` must exceed 2 × `MARGIN` plus the detection delay and `RESPONDER_TTL`
+  must be at least `MARGIN`, otherwise every attempt expires and is retried forever, at a gas cost each time.
 
 **Better options for this need:** proof-based data sharing (Hyperledger Cacti / Weaver [13]) or one shared ledger.
 HTLC fits only if records are exchanged for value.
@@ -224,3 +244,6 @@ The real code is in `ledgers/ethereum/contracts/HashSyncHTLC.sol`, `ledgers/fabr
 11. I. Tsabary et al., *MAD-HTLC*, IEEE S&P 2021. https://arxiv.org/abs/2006.12031
 12. *SoK: A Review of Cross-Chain Bridge Hacks in 2023*, 2025. https://arxiv.org/abs/2501.03423
 13. Hyperledger Cacti, Weaver RFCs (data sharing). https://github.com/hyperledger/cacti/blob/main/weaver/rfcs/README.md
+14. J. Harris, A. Zohar, *Flood & Loot: A Systemic Attack On The Lightning Network*, AFT 2020. https://arxiv.org/abs/2006.08513
+15. A. Mizrahi, A. Zohar, *Congestion Attacks in Payment Channel Networks*, FC 2021. https://arxiv.org/abs/2002.06564
+16. ethereum.org, *Single slot finality* (current finality: about 15 minutes). https://ethereum.org/en/roadmap/single-slot-finality/

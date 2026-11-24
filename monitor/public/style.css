@@ -143,9 +143,16 @@ tr.detail > td { background: var(--hover); padding: 0 12px 14px 34px; }
 .legend { display: flex; gap: 16px; font-size: 12px; color: var(--muted); margin-top: 6px; }
 .legend span { display: inline-flex; align-items: center; gap: 5px; }
 
-/* deadlines */
-.deadlines { display: flex; gap: 28px; flex-wrap: wrap; font-size: 12.5px; margin: 0 0 12px; }
-.deadlines strong { font-variant-numeric: tabular-nums; font-weight: 600; }
+/* time locks of the two HTLCs */
+.locks { background: var(--bg); border: 1px solid var(--line); border-radius: 6px; margin: 0 0 12px; font-size: 13px; }
+.locks caption { caption-side: top; text-align: left; font-size: 12px; color: var(--muted); padding: 0 0 6px; }
+.locks th[scope=row] { background: none; color: var(--text); font-weight: 600; border-bottom: 1px solid var(--line-soft); }
+.locks td, .locks th { padding: 6px 12px; }
+.locks tbody tr:last-child > * { border-bottom: 0; }
+.lock.ok { color: var(--ok); }
+.lock.off { color: var(--off); }
+.lock.run { color: var(--run); }
+.lock strong { font-variant-numeric: tabular-nums; font-weight: 600; }
 meter { width: 140px; height: 6px; vertical-align: middle; margin-left: 6px; }
 
 /* records */
