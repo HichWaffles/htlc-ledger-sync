@@ -7,7 +7,7 @@ if [ "${1:-}" != "--yes" ]; then
   read -r -p "This erases the Fabric ledger and both app databases. Type 'reset' to continue: " answer
   [ "$answer" = reset ] || die "Cancelled."
 fi
-"$ROOT/scripts/stop.sh"
+bash "$ROOT/scripts/stop.sh"
 info "Removing the Fabric network"
 (cd "$NET" && ./network.sh down >"$LOGS/fabric-down.log" 2>&1) && ok "network.sh down"
 info "Removing local state"

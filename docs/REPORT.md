@@ -90,31 +90,32 @@ stateDiagram-v2
 
 ## 5. Running it
 
-### 5.1 Publishing the anonymous repository (once)
+### 5.1 Publishing anonymously (once)
 
-The history already has a single anonymous author (`anonymous <anonymous@users.noreply.github.com>`) and the repository's
-local git config keeps it for new commits. Generated files (`.env`, keys, databases, logs) are git-ignored.
+The code lives in a **private** GitHub repository; reviewers get a public, anonymised copy from
+[Anonymous GitHub](https://anonymous.4open.science), which hides the owner and repository name and replaces chosen
+words in every file. The commit history already has a single anonymous author, and generated files (`.env`, keys,
+databases, logs) are git-ignored.
 
-1. Create a GitHub account that does not identify you, then an **empty** repository in it (no README, no licence).
-2. Check before every push (your names and logins are typed here only, never stored in the repository):
+1. Check before every push (names and logins are typed here only, never stored in the repository):
    ```bash
-   ANON_TERMS="first name,last name,personal login" bash scripts/check-anonymous.sh
+   ANON_TERMS="first name,last name,github login" npm run check:anonymous
    ```
-3. Push with the anonymous account (put its login in the URL so git does not reuse your personal credentials):
-   ```bash
-   git remote add origin https://<anonymous-login>@github.com/<anonymous-login>/htlc-ledger-sync.git
-   git push -u origin main
-   ```
-4. For reviewers, [Anonymous GitHub](https://anonymous.4open.science) can also serve a read-only anonymised mirror.
+2. Push to a private repository: `gh repo create htlc-ledger-sync --private --source . --push`
+   (later changes: `git push`).
+3. On anonymous.4open.science: sign in with GitHub, anonymise `htlc-ledger-sync` (branch `main`), list the same
+   words to hide, allow downloads, optionally set an expiry date. Share only the resulting
+   `https://anonymous.4open.science/r/<id>` link; it shows the files, not the commit history.
 
 ### 5.2 Running it
 
 Prerequisites: Linux or **WSL2 (Ubuntu)**, Docker (Docker Desktop with WSL integration on Windows), Node.js 20+,
-git, curl, jq. On Windows run every command **inside WSL**, with the repository in the WSL file system (not `/mnt/c`).
+git, curl, jq, unzip. On Windows run every command **inside WSL**, with the code in the WSL file system (not `/mnt/c`).
+
+Download the zip from the anonymous link, then:
 
 ```bash
-git clone https://github.com/<anonymous-login>/htlc-ledger-sync.git ~/htlc-ledger-sync
-cd ~/htlc-ledger-sync
+unzip ~/htlc-ledger-sync.zip -d ~/htlc-ledger-sync && cd ~/htlc-ledger-sync   # the folder with package.json
 npm run setup        # checks tools, downloads Fabric 2.5 if missing, installs, writes the .env files
 npm start            # Hardhat + contracts, Fabric + chaincodes, TP1, TP2, monitor
 ```
