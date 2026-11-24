@@ -54,6 +54,7 @@ const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8">
     await page.waitForFunction(() => document.title === 'ready' || document.title.startsWith('error'), null, { timeout: 60000 });
     const title = await page.title();
     if (title !== 'ready') throw new Error(`Mermaid ${title}`);
+    await page.evaluate(() => { document.title = (document.querySelector('h1') || {}).textContent || 'Report'; });   // PDF title metadata
     await page.evaluate(() => Promise.all([...document.images].map((i) => (i.complete ? null : new Promise((ok) => { i.onload = i.onerror = ok; })))));
     await page.pdf({ path: out, format: 'A4', printBackground: true, displayHeaderFooter: true,
       headerTemplate: '<span></span>',

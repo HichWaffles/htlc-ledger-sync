@@ -110,12 +110,15 @@ databases, logs) are git-ignored.
 ### 5.2 Running it
 
 Prerequisites: Linux or **WSL2 (Ubuntu)**, Docker (Docker Desktop with WSL integration on Windows), Node.js 20+,
-git, curl, jq, unzip. On Windows run every command **inside WSL**, with the code in the WSL file system (not `/mnt/c`).
+git, curl and python3 (included in Ubuntu), jq (`sudo apt install jq`). On Windows run every command **inside WSL**, with the code in the WSL file system (not `/mnt/c`).
 
-Download the zip from the anonymous link, then:
+The code is at **https://anonymous.4open.science/r/htlc-ledger-sync-FC78/**. Anonymous GitHub does not support
+`git clone`, so download it with its zip link instead:
 
 ```bash
-unzip ~/htlc-ledger-sync.zip -d ~/htlc-ledger-sync && cd ~/htlc-ledger-sync   # the folder with package.json
+mkdir -p ~/htlc-ledger-sync && cd ~/htlc-ledger-sync
+curl -L -o repo.zip https://anonymous.4open.science/api/repo/htlc-ledger-sync-FC78/zip
+python3 -m zipfile -e repo.zip . && rm repo.zip      # unzip with Python (installed on Ubuntu)
 npm run setup        # checks tools, downloads Fabric 2.5 if missing, installs, writes the .env files
 npm start            # Hardhat + contracts, Fabric + chaincodes, TP1, TP2, monitor
 ```

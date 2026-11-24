@@ -12,10 +12,13 @@ Report: [`docs/REPORT.md`](docs/REPORT.md) ([PDF](docs/REPORT.pdf)) · plan: [`d
 
 ## Quick start
 
-Linux or WSL2 (Ubuntu) with Docker, Node.js 20+, git, curl, jq and unzip. On Windows, work **inside WSL** (not under `/mnt/c`).
-Download the repository zip from the anonymous link, unzip it, then from the folder that holds `package.json`:
+Linux or WSL2 (Ubuntu) with Docker, Node.js 20+, git, curl, jq and python3. On Windows, work **inside WSL** (not under `/mnt/c`).
+Code: https://anonymous.4open.science/r/htlc-ledger-sync-FC78/ (Anonymous GitHub has no `git clone`; use its zip link):
 
 ```bash
+mkdir -p ~/htlc-ledger-sync && cd ~/htlc-ledger-sync
+curl -L -o repo.zip https://anonymous.4open.science/api/repo/htlc-ledger-sync-FC78/zip
+python3 -m zipfile -e repo.zip . && rm repo.zip      # unzip with Python (installed on Ubuntu)
 npm run setup     # checks tools, gets Fabric 2.5 if missing, installs packages, writes the .env files
 npm start         # Hardhat + contracts, Fabric + chaincodes, both apps, monitor
 ```
